@@ -1,0 +1,22 @@
+{
+    "properties":{
+            "exception":{
+                "type":"boolean"
+            },
+            "id":{
+                "type":"integer"
+            },
+            "age":{
+                "type":"integer"
+            },
+            "name":{
+                "type":"string"
+            },
+            "data":{
+                "type":"integer"
+            },
+            "address":{
+                "type":"string"
+            }
+        }
+    }

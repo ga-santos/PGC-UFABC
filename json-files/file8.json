@@ -1,0 +1,102 @@
+{
+    "type": "object",
+    "properties": {
+        "firstName": {
+            "type": "string",
+            "description": "The person's first name."
+        },
+        "lastName": {
+            "type": "string",
+            "description": "The person's last name."
+        },
+        "nome": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome2": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome3": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome4": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome5": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome6": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome7": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome8": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome9": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome10": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome11": {
+            "type":"object",
+            "properties":{
+                "pro1":{
+                    "type":"string"
+                },
+                "pro2-pro":{
+                    "type":"object",
+                    "properties":{
+                        "pro3":{
+                            "type":"string"
+                        }
+                    }
+                },
+                "pro4":{
+                    "type":"integer"
+                }
+            }
+        },
+        "nome12": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome13": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome14": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "nome15": {
+            "description": "Age in years which must be equal to or greater than zero.",
+            "type": "integer",
+            "minimum": 0
+        }
+    }
+}

@@ -1,0 +1,66 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://example.com/root.json",
+    "type": "object",
+    "title": "The Root Schema",
+    "required": [
+      "fruits",
+      "vegetables"
+    ],
+    "properties": {
+      "fruits": {
+        "$id": "#/properties/fruits",
+        "type": "array",
+        "title": "The Fruits Schema",
+        "items": {
+          "$id": "#/properties/fruits/items",
+          "type": "string",
+          "title": "The Items Schema",
+          "default": "",
+          "examples": [
+            "apple",
+            "orange",
+            "pear"
+          ],
+          "pattern": "^(.*)$"
+        }
+      },
+      "vegetables": {
+        "$id": "#/properties/vegetables",
+        "type": "array",
+        "title": "The Vegetables Schema",
+        "items": {
+          "$id": "#/properties/vegetables/items",
+          "type": "object",
+          "title": "The Items Schema",
+          "required": [
+            "veggieName",
+            "veggieLike"
+          ],
+          "properties": {
+            "veggieName": {
+              "$id": "#/properties/vegetables/items/properties/veggieName",
+              "type": "string",
+              "title": "The Veggiename Schema",
+              "default": "",
+              "examples": [
+                "potato"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "veggieLike": {
+              "$id": "#/properties/vegetables/items/properties/veggieLike",
+              "type": "boolean",
+              "title": "The Veggielike Schema",
+              "default": false,
+              "examples": [
+                true
+              ]
+            }
+          }
+        }
+      }
+    }
+   
+  }

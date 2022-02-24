@@ -1,0 +1,76 @@
+{
+    "$id": "https://example.com/geographical-location.schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Longitude and Latitude Values",
+    "description": "A geographical coordinate.",
+    "required": [ "latitude", "longitude" ],
+    "type": "object",
+    "properties": {
+      "latitude": {
+        "type": "number"
+      },
+      "longitude": {
+        "type": "object",
+        "properties": {
+            "teste":{
+                "type":"integer"
+            }
+        }
+      },
+      "teste2":{
+          "type":"boolean"
+      },
+      "teste3":{
+        "type":"array",
+        "items":{
+          "type":"integer"
+        }
+      },
+      "teste4":{
+        "type":"array",
+        "items":{
+          "type":"object",
+          "properties": {
+            "nomearray1":{
+              "type":"string"
+            },
+            "nomearray2":{
+              "type":"integer"
+            },
+            "nomearray3":{
+              "type":"integer"
+            }
+          }
+        }
+      },
+      "teste5":{
+        "type":"array",
+        "items":{
+          "type":"integer"
+        }
+      },
+      "teste6":{
+        "type":"array",
+        "items":{
+          "type":"object",
+          "properties": {
+            "nomearray1":{
+              "type":"string"
+            },
+            "nomearray2":{
+              "type":"integer"
+            },
+            "nomearray3":{
+              "type":"integer"
+            }
+          }
+        }
+      },
+      "teste7":{
+        "type":"array",
+        "items":{
+          "type":"integer"
+        }
+      }
+    }
+  }

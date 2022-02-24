@@ -1,0 +1,72 @@
+{
+    "properties": {
+      "usuario": {
+        "type": "object",
+        "properties": {
+          "firstName":{
+            "type":"string"
+          },
+          "codigo": {
+            "type": "integer"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "sobrenome": {
+            "type": "string"
+          },
+          "idade": {
+            "type": "integer"
+          },
+          "data_nascimento": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "object",
+            "properties": {
+              "atividade": {
+                "type": "object",
+                "properties": {
+                  "posts": {
+                    "type": "integer"
+                  },
+                  "ultima_postagem": {
+                    "type": "string"
+                  },
+                  "respostas": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "ultima_entrada": {
+                "type": "string"
+              },
+              "teste1":{
+                "type":"string"
+              },
+              "teste2":{
+                "type":"object",
+                "properties":{
+                  "teste3,5":{
+                    "type":"integer"
+                  }
+                }
+              },
+              "teste3":{
+                "type":"integer"
+              }
+            }
+          },
+          "teste4":{
+            "type":"integer"
+          }
+        }
+      },
+      "teste5":{
+        "type":"integer"
+      }
+    }
+  }

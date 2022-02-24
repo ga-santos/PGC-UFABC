@@ -1,0 +1,14 @@
+amount amt
+code cd
+date dt
+description desc
+identifier id
+indicator ind
+name nm
+number num
+quantity qty
+rate rt
+statement stmt 
+text txt
+customer cust 
+address add

@@ -1,0 +1,22 @@
+{
+    "properties":{
+            "irregularity":{
+                "type":"boolean"
+            },
+            "code":{
+                "type":"integer"
+            },
+            "lifetime":{
+                "type":"integer"
+            },
+            "name":{
+                "type":"string"
+            },
+            "information":{
+                "type":"integer"
+            },
+            "label":{
+                "type":"string"
+            }
+        }
+    }
