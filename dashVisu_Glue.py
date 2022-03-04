@@ -34,6 +34,21 @@ json_node_listAll = []
 dados = []
 dados_reduzido = []
 
+arestasAtuais = []
+
+pares_confirmados = []
+pares_recusados = []
+
+arestaSelecionada = []
+
+inputs = [["input_filtro_dif_comprimento","value"], ["btRecarregar","n_clicks"], ["btCarregarInicio","n_clicks"], ["btCarregarProximo","n_clicks"], ["btRecusarCorresp", "n_clicks"], ["btConfirmarCorresp", "n_clicks"]]
+
+
+def obterNomesSchemas():
+    tupla = lista_combinacoes[posicao_lista_comparacao]
+    nomesSchemas = jg.obterNomesSchemas(tupla[0], tupla[1])
+    return [str(nomesSchemas[0]),str(nomesSchemas[1])]
+
 
 def carregaJsonGlue():
     global lista_combinacoes
@@ -67,6 +82,7 @@ def carregaGrafo():
     global dicionario_num_node2
     global inv_dict_num_node
     global json_node_listAll
+    global arestasAtuais
 
     global inv_dicionario_num_node_all
 
@@ -103,9 +119,9 @@ def carregaGrafo():
     json_node_list2 = gerar_nodes(node_list2,2,len(dicionario_num_node1))
     json_node_listAll = json_node_list1 + json_node_list2
 
-    arestas = gera_arestas(dados)
+    arestasAtuais = gera_arestas(dados,len(inv_dict_num_node))
 
-    elem_list = json_node_listAll + arestas
+    elem_list = json_node_listAll + arestasAtuais
 
     return elem_list
 
@@ -128,7 +144,7 @@ def gerar_nodes(list,classes,first_id):
         for i, node in enumerate(list)
     ]
 
-def gera_arestas(data):
+def gera_arestas(data, first_id):
     global dicionario_num_node1
     global dicionario_num_node2
 
@@ -140,13 +156,14 @@ def gera_arestas(data):
 
         temp_dict = {
             "data": {
+                        "id": first_id + i,
                         "source": dicionario_num_node1[v1],
                         "target": dicionario_num_node2[v2],
                         "media_comprimento": row[6],
                         "desvio_padrao": row[7],
                         "histograma": row[8],
                      },
-            "classes": 1,
+            "classes": "1",
             "locked": True,
         }
 
@@ -255,7 +272,7 @@ def gera_arestas_reduzido(data, dict_num_node_reduzido):
                 "desvio_padrao": row[3],
                 "histograma": row[4],
             },
-            "classes": 1,
+            "classes": "1",
             "locked": True,
         }
 
@@ -368,6 +385,18 @@ body_layout = html.Div(
                             'style': {
                                 'background-color': 'red'
                             }
+                        },
+                        {
+                            'selector': '.confirmado',
+                            'style': {
+                                'line-color': 'green'
+                            }
+                        },
+                        {
+                            'selector': '.recusado',
+                            'style': {
+                                'line-color': 'red'
+                            }
                         }
                     ]
                 )
@@ -375,18 +404,36 @@ body_layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Alert(
-                    id="node-data",
-                    children="Detalhes do elemento do esquema",
-                    color="secondary",
+                dbc.Col(
+                    dbc.Alert(
+                        id="node-data",
+                        children="Detalhes do elemento do esquema",
+                        color="secondary",
+                    )
                 ),
-                dbc.Alert(
-                    id="edge-data",
-                    children="Detalhes da correspondência dos elementos",
-                    color="secondary",
+                dbc.Col(
+                    [
+                        dbc.Row(
+                            dbc.Alert(
+                                id="edge-data",
+                                children="Detalhes da correspondência dos elementos",
+                                color="secondary",
+                            )
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Button("Confirmar Correspondência", color="success", className="mr-1", id="btConfirmarCorresp", n_clicks=0,
+                                               size="sm", style={"height": "50%"}),
+                                dbc.Button("Recusar Correspondência", color="danger", className="mr-1", id="btRecusarCorresp", n_clicks=0,
+                                           size="sm", style={"height": "50%"})
+                            ]
+                        )
+                    ]
                 )
             ]
-        )
+        ),
+        html.Br()
+
     ], style={"margin-left": "5%", "margin-right": "5%"}
 )
 
@@ -407,22 +454,29 @@ def salvarInputSchemas(value):
     Output("edge-data", "children"), Input("core_19_cytoscape", "selectedEdgeData")
 )
 def display_edgedata(edge):
-    contents = "Detalhes da correspondência selecionada"
+    global arestaSelecionada
+
+    contents = []
+    contents.append(html.H6("Detalhes da correspondência selecionada"))
+
     if edge is not None:
         if(len(edge) > 0):
             data = edge[0]
+            arestaSelecionada = data
             #data['target'].connectedEdges().style({'line-color': 'red'})
 
-            contents = []
-            contents.append(html.H5("Title: " + data["id"].title()))
+            nomesSchemas = obterNomesSchemas()
+
+            contents.append(html.Br())
+            #contents.append(html.H5("Title: " + data["id"].title()))
             contents.append(
-                html.P(
-                    "Source: {id: " + data['source'] + ", label: " + inv_dict_num_node[int(data["source"])] + "}"
+                html.H6(
+                    "Elemento do esquema " + nomesSchemas[0] + ": " + inv_dict_num_node[int(data["source"])]
                 )
             )
             contents.append(
-                html.P(
-                    "Target: {id: " + data['target'] + ", label: " + inv_dict_num_node[int(data["target"])] + "}"
+                html.H6(
+                     "Elemento do esquema " + nomesSchemas[1] + ": " + inv_dict_num_node[int(data["target"])]
                 )
             )
             contents.append(
@@ -440,6 +494,18 @@ def display_edgedata(edge):
                     "Análise histograma: " + ",".join(data['histograma'])
                 )
             )
+            """
+            contents.append(
+                dbc.Row(
+                    [
+                        dbc.Button("Confirmar Correspondência", color="success", className="mr-1", id="btConfirmarCorresp", n_clicks=0,
+                                   size="sm", style={"height": "50%"}),
+                        dbc.Button("Recusar Correspondência", color="danger", className="mr-1", id="btRecusarCorresp", n_clicks=0,
+                                   size="sm", style={"height": "50%"})
+                    ]
+                )
+            )
+            """
 
     return contents
 
@@ -447,12 +513,15 @@ def display_edgedata(edge):
     Output("node-data", "children"), [Input("core_19_cytoscape", "selectedNodeData")]
 )
 def display_nodedata(datalist):
-    contents = "Detalhes do elemento selecionado"
+    contents = []
+    contents.append(html.H6("Detalhes do elemento selecionado"))
+
     if datalist is not None:
         if len(datalist) > 0:
             data = datalist[-1]
-            contents = []
-            contents.append(html.H5("Title: " + data["label"].title()))
+
+            contents.append(html.Br())
+            #contents.append(html.H5("Title: " + data["label"].title()))
             contents.append(
                 html.P(
                     "Id: "
@@ -462,9 +531,16 @@ def display_nodedata(datalist):
     return contents
 
 @app.callback(
-    [Output("core_19_cytoscape", "elements"),Output("titulo_H5", "children")],[Input("input_filtro_dif_comprimento", "value"),Input("btRecarregar", "n_clicks"),Input("btCarregarInicio", "n_clicks"),Input("btCarregarProximo", "n_clicks")],
+    [
+        Output("core_19_cytoscape", "elements"),
+        Output("titulo_H5", "children")
+    ],
+    [
+
+        Input('{}'.format(input[0]), '{}'.format(input[1])) for input in inputs
+    ],
 )
-def modificaGrafo(input_media, btRecarregar, btCarregarInicio, btCarregarProximo):
+def acoesBotoes(input_media, btRecarregar, btCarregarInicio, btCarregarProximo, btConfirmarCorresp, btRecusarCorresp):
     global actual_elem_list
     global posicao_lista_comparacao
     global parte
@@ -515,11 +591,27 @@ def modificaGrafo(input_media, btRecarregar, btCarregarInicio, btCarregarProximo
             arestas = gera_arestas(dados_filtrados)
             actual_elem_list = json_node_listAll + arestas
 
+    elif input == "btConfirmarCorresp":
+        for aresta in arestasAtuais:
+            if(int(aresta["data"]["id"]) == int(arestaSelecionada["id"])):
+                aresta["classes"] += " confirmado"
+
+        actual_elem_list = json_node_listAll + arestasAtuais
+        pares_confirmados.append(arestaSelecionada["id"])
+
+    elif input == "btRecusarCorresp":
+        for aresta in arestasAtuais:
+            if(int(aresta["data"]["id"]) == int(arestaSelecionada["id"])):
+                aresta["classes"] += " recusado"
+
+        actual_elem_list = json_node_listAll + arestasAtuais
+        pares_recusados.append(arestaSelecionada["id"])
+
+
     try:
         if (posicao_lista_comparacao < len(lista_combinacoes)):
-            tupla = lista_combinacoes[posicao_lista_comparacao]
-            nomesSchemas = jg.obterNomesSchemas(tupla[0], tupla[1])
-            titulo = "Schema " + str(nomesSchemas[0]) + ' vs Schema ' + str(nomesSchemas[1]) + ' - Porcentagem: ' + str(parte * 20) + '%\n'
+            nomesSchemas = obterNomesSchemas()
+            titulo = "Esquema " + nomesSchemas[0] + ' vs Esquema ' + nomesSchemas[1] + ' - Porcentagem: ' + str(parte * 20) + '%\n'
         elif(len(lista_combinacoes) > 0):
             titulo = "Visão Geral dos Schemas\n"
     except:
@@ -527,7 +619,6 @@ def modificaGrafo(input_media, btRecarregar, btCarregarInicio, btCarregarProximo
 
 
     return actual_elem_list, titulo
-
 
 def runApp():
     app.run_server(debug=False)
