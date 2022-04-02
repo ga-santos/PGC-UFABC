@@ -295,7 +295,6 @@ def leituraSchemas(argumentos):
             for y in range(x + 1, filenum - 1):
                 combinacoesSchemas.append([x, y])
 
-    print()
     return filenum
 
 
@@ -324,9 +323,8 @@ def compararSchemas(x, y, part):
 
 def obterNomesSchemas(x,y):
     global filename
-    return [formatName(filename[x]),formatName(filename[y])]
 
-    return full
+    return [formatName(filename[x]),formatName(filename[y])]
 
 
 
