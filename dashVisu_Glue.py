@@ -134,8 +134,8 @@ def carregaJsonGlue():
     global listaCombinacoes
     global inputSchemas
 
-    #jg.leituraSchemas("covidA.json covidB.json")
-    jg.leituraSchemas("caso1.json caso2.json caso3.json")
+    jg.leituraSchemas("covidA.json covidB.json")
+    #jg.leituraSchemas("caso1.json caso2.json caso3.json")
     #jg.leituraSchemas(inputSchemas)
 
     listaCombinacoes = jg.combinacoesSchemas
@@ -439,11 +439,10 @@ body_layout = html.Div(
 
                 dbc.FormGroup(
                     [
-                        dcc.Input(
+                        dbc.Input(
                             id="input_schemas",
                             placeholder = 'Digite os schemas',
-                            type = 'text',
-                            value = ""
+                            type = 'text'
                         )
                     ]
                 ),
@@ -477,31 +476,6 @@ body_layout = html.Div(
                 )
             ]
         ),
-        # dbc.Row(
-        #     [
-        #         html.Br(),
-        #
-        #         dbc.Badge(
-        #             "Filtros", color="light", className="mr-1", style={"height": "50%", "font-size": "medium"}
-        #         ),
-        #
-        #         dbc.Badge(
-        #             "Diferença nas médias de comprimento:", color="info", className="mr-1", style={"height": "50%"}
-        #         ),
-        #         dbc.FormGroup(
-        #             [
-        #                 dcc.Input(
-        #                     id="inputValorFiltro",
-        #                     placeholder = 'Digite um valor...',
-        #                     type = 'number',
-        #                     value = default_media
-        #                 )
-        #             ]
-        #         ),
-        #
-        #         html.Div(id='output_schemas', style='visibility: hidden')
-        #     ]
-        # ),
         dbc.Row(
                 html.H5(titulo, id="titulo_H5", style={'textAlign': 'center'})
         ),
@@ -583,8 +557,11 @@ app.layout = html.Div([body_layout])
 )
 def salvarInputSchemas(value):
     global inputSchemas
-    inputSchemas = value
-    #print(inputSchemas)
+    inputSchemas = ""
+
+    for esquema in value:
+        inputSchemas += (esquema + ".json")
+
     return value
 
 
