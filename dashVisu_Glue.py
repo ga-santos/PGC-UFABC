@@ -1,29 +1,15 @@
 import ast
-import pandas as pd
-import numpy as np
+import os
+import signal
 import random
 import dash
+import numpy as np
+import jsonglue_dash as jg
 import dash_cytoscape as cyto
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
-
-import os
-import signal
-
-import jsonglue_dash as jg
-
-import numpy as np
-from sklearn.cluster import KMeans
-
-#SET OPTIONS DATAFRAME
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
-pd.set_option('display.float_format', lambda x: '%.0f' % x)
-
 
 posicaoListaCombinacoes = 0
 posicaoRegistro = 0
@@ -60,7 +46,6 @@ optionsDropdownFiltro = [
 
 filtroAtivo = ""
 
-
 def resetarVariveisGlobais():
     global posicaoListaCombinacoes
     global posicaoRegistro
@@ -79,9 +64,6 @@ def resetarVariveisGlobais():
     global paresConfirmados
     global paresRecusados
     global arestaSelecionada
-    global inputSchemas
-    global inputs
-    global optionsDropdownFiltro
     global filtroAtivo
 
     posicaoListaCombinacoes = 0
@@ -108,17 +90,6 @@ def resetarVariveisGlobais():
 
     arestaSelecionada = []
 
-    inputSchemas = ""
-
-    inputs = [["inputValorFiltro", "value"], ["btCarregarAnterior", "n_clicks"], ["btCarregarInicio", "n_clicks"],
-              ["btCarregarProximo", "n_clicks"], ["btRecusarCorresp", "n_clicks"], ["btConfirmarCorresp", "n_clicks"],
-              ["dropdownFiltros", "value"]]
-
-    optionsDropdownFiltro = [
-        {'label': 'Diferença Média de Comprimento', 'value': 'DifMediaComp'},
-        {'label': 'Diferença Desvio Padrão dos dados', 'value': 'DifDesvioPadrao'}
-    ]
-
     filtroAtivo = ""
 
 def obterNomesSchemas():
@@ -134,9 +105,19 @@ def carregaJsonGlue():
     global listaCombinacoes
     global inputSchemas
 
-    jg.leituraSchemas("covidA.json covidB.json")
+    esquemas = ""
+    #jg.leituraSchemas("covidA.json covidB.json")
     #jg.leituraSchemas("caso1.json caso2.json caso3.json")
-    #jg.leituraSchemas(inputSchemas)
+
+    countWords = 0
+    for esquema in inputSchemas.split(" "):
+        esquemas += esquema + ".json"
+
+        countWords += 1
+        if countWords != len(inputSchemas.split(" ")):
+            esquemas += " "
+
+    jg.leituraSchemas(esquemas)
 
     listaCombinacoes = jg.combinacoesSchemas
 
@@ -240,27 +221,6 @@ def gerarNodes(listaNodes,classes,firstId):
         }
         for i, node in enumerate(listaNodes)
     ]
-
-def prepararKmeans(data):
-    nodes = []
-    nodes_comprimento = []
-
-    for i, row in enumerate(data):
-        nodes.append(row[0])
-        nodes_comprimento.append(row[6])
-
-    for i, row in enumerate(data):
-        nodes.append(row[3])
-        nodes_comprimento.append(row[6])
-
-    dataset = np.array(nodes_comprimento)
-
-    kmeans = KMeans(n_clusters=3,
-                    init='k-means++', n_init=10,
-                    max_iter=300)
-    clusters = kmeans.fit_predict(dataset.reshape(-1,1))
-
-    return list(zip(nodes, clusters))
 
 def gerarArestas(data):
     global dictListaNodes1
@@ -439,7 +399,7 @@ body_layout = html.Div(
 
                 dbc.FormGroup(
                     [
-                        dbc.Input(
+                        dcc.Input(
                             id="input_schemas",
                             placeholder = 'Digite os schemas',
                             type = 'text'
@@ -543,7 +503,8 @@ body_layout = html.Div(
                            size="sm", style={"height": "50%"})
             ]
         ),
-        html.Br()
+        html.Br(),
+        html.Div(id="output_schemas", style={"display": "none"})
 
     ], style={"margin-left": "5%", "margin-right": "5%"}
 )
@@ -557,10 +518,8 @@ app.layout = html.Div([body_layout])
 )
 def salvarInputSchemas(value):
     global inputSchemas
-    inputSchemas = ""
 
-    for esquema in value:
-        inputSchemas += (esquema + ".json")
+    inputSchemas = value
 
     return value
 
@@ -603,17 +562,17 @@ def cliqueAresta(edge):
 
             contents.append(
                 html.P(
-                    "Diferença na média dos comprimentos dos dados (AVG): " + str(data['media_comprimento'])
+                    "Diferença na média dos comprimentos dos dados (AVG): " + str(round(float(data['media_comprimento']),3))
                 )
             )
             contents.append(
                 html.P(
-                    "Diferença no desvio padrão dos dados (STD): " + str(data['desvio_padrao'])
+                    "Diferença no desvio padrão dos dados (STD): " + str(round(float(data['desvio_padrao']),3))
                 )
             )
             contents.append(
                 html.P(
-                    "Análise histograma: " + ",".join(data['histograma'])
+                    "Análise histograma: " + ", ".join([str(round(float(x),3)) for x in data['histograma']])
                 )
             )
 
@@ -674,12 +633,11 @@ def acoesInputs(inputValorFiltro, btCarregarAnterior, btCarregarInicio, btCarreg
 
     if input == "btCarregarInicio":
         resetarVariveisGlobais()
+        jg.resetarVariveisGlobais()
         carregaJsonGlue()
         posicaoListaCombinacoes = 0
 
         listaElementosCyto = compararSchema(parte=1)
-        #compararTodosSchemasReduzido()
-        #listaElementosCyto = carregarGrafoReduzidoCytoscape()
 
     elif input == "btCarregarProximo": # COLOCAR TRAVA!
         parte += 1
@@ -829,9 +787,9 @@ def acoesInputs(inputValorFiltro, btCarregarAnterior, btCarregarInicio, btCarreg
     try:
         if (posicaoListaCombinacoes < len(listaCombinacoes)):
             nomesSchemas = obterNomesSchemas()
-            titulo = "Esquema " + nomesSchemas[0] + ' vs Esquema ' + nomesSchemas[1] + ' - Porcentagem: ' + str(parte * 20) + '%\n'
+            titulo = "Esquema " + nomesSchemas[0] + ' vs Esquema ' + nomesSchemas[1] + ' - Porcentagem: ' + str((parte-1) * 20) + '% - ' + str(parte * 20) + '%\n'
         elif(len(listaCombinacoes) > 0):
-            titulo = "Visão Geral dos Schemas\n"
+            titulo = "Visão Geral dos Esquemas\n"
     except:
         None
 

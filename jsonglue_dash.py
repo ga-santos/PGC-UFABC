@@ -178,6 +178,21 @@ filename = []
 graphs_size = []
 combinacoesSchemas = []
 
+def resetarVariveisGlobais():
+    global filenum
+    global flags
+    global graphs_dict
+    global filename
+    global graphs_size
+    global combinacoesSchemas
+
+    filenum = 0
+    flags = ""
+    graphs_dict = []
+    filename = []
+    graphs_size = []
+    combinacoesSchemas = []
+
 def leituraSchemas(argumentos):
     global filenum
     global flags
