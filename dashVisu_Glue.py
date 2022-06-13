@@ -6,8 +6,8 @@ import dash
 import numpy as np
 import jsonglue_dash as jg
 import dash_cytoscape as cyto
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html
+from dash import dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 
@@ -393,58 +393,60 @@ body_layout = html.Div(
         html.Br(),
         dbc.Row(
             [
-                #dbc.Badge(
-                #    "Digite os schemas para análise:", color="info", className="mr-1", style={"height": "50%"}
-                #),
+                dbc.Col(
+                    dbc.Form(
+                        [
+                            dcc.Input(
+                                id="input_schemas",
+                                placeholder = 'Digite os schemas',
+                                type = 'text',
+                                style = {"border-radius": "4px"}
+                            )
+                        ]
+                    )
+                ),
 
-                dbc.FormGroup(
-                    [
-                        dcc.Input(
-                            id="input_schemas",
-                            placeholder = 'Digite os schemas',
-                            type = 'text'
-                        )
-                    ]
-                ),
-                dbc.Button("Iniciar Correspondências", color="primary", className="mr-2 ml-4", id="btCarregarInicio", n_clicks=0, size="sm", style={"height": "50%"}),
-                dbc.Button("Próximo Matching", color="outline-primary", className="mr-2", id="btCarregarProximo", n_clicks=0, size="sm", style={"height": "50%"}),
-                dbc.Button("Matching Anterior", color="outline-primary", className="mr-5", id="btCarregarAnterior", n_clicks=0, size="sm", style={"height": "50%"}),
+                dbc.Col([dbc.Button("Iniciar Correspondências", color="primary", id="btCarregarInicio", n_clicks=0, size="sm")]),
+                dbc.Col([dbc.Button("Próximo Matching", color="outline-primary", id="btCarregarProximo", n_clicks=0, size="sm")], style = {"margin-left": "-3%"}),
+                dbc.Col([dbc.Button("Matching Anterior", color="outline-primary", id="btCarregarAnterior", n_clicks=0, size="sm")], style = {"margin-left": "-6%"}),
 
-                dbc.Badge(
-                    "Filtros", color="light", className="mr-1", style={"height": "50%", "font-size": "medium"}
+                dbc.Col(
+                    [dbc.Badge(
+                        "Filtros", className="mr-1", style={"font-size": "medium"}
+                    )]
                 ),
-                html.Div(
-                    [
-                        dcc.Dropdown(   options=optionsDropdownFiltro,
-                                        value="NYC",
-                                        id="dropdownFiltros",
-                                        placeholder="Selecione um filtro.."
-                        )
-                    ],
-                    style={"width": "22%", "margin-right": "1%"}
+                dbc.Col(
+                        dcc.Dropdown(
+                            options=optionsDropdownFiltro,
+                            id="dropdownFiltros",
+                            placeholder="Selecione um filtro.."
+                        ),
+                        style={"margin-left": "-10%"}
                 ),
-                dbc.FormGroup(
-                    [
-                        dcc.Input(
-                            id="inputValorFiltro",
-                            placeholder = 'Digite um valor...',
-                            type = 'number',
-                            value = default_media,
-                            style={"width": "60%"}
-                        )
-                    ]
+                dbc.Col(
+                    dbc.Form(
+                        [
+                            dcc.Input(
+                                id="inputValorFiltro",
+                                placeholder = 'Digite um valor...',
+                                type = 'number',
+                                value = default_media,
+                                style={"width": "40%", "border-radius": "4px"}
+                            )
+                        ]
+                    )
                 )
             ]
         ),
         dbc.Row(
-                html.H5(titulo, id="titulo_H5", style={'textAlign': 'center'})
+                html.H5(titulo, id="titulo_H5", style={'textAlign': 'center', 'margin-top': '1%'})
         ),
         dbc.Row(
             [
                 cyto.Cytoscape(
                     id="core_19_cytoscape",
                     layout={"name": "preset"},
-                    style={"width": "100%", "height": "500px"},
+                    style={"width": "100%", "height": "550px"},
                     elements=StartupListaElementosCyto,
                     minZoom=0.65,
                     maxZoom=0.95,
@@ -492,16 +494,22 @@ body_layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Alert(
-                    id="edge-data",
-                    children="Detalhes da correspondência dos elementos",
-                    color="secondary",
+                dbc.Col(
+                    dbc.Alert(
+                        id="edge-data",
+                        children="Detalhes da correspondência dos elementos",
+                        color="secondary",
+                    )
                 ),
-                dbc.Button("Confirmar Correspondência", color="success", className="mr-1 ml-1", id="btConfirmarCorresp", n_clicks=0,
-                               size="sm", style={"height": "50%"}),
-                dbc.Button("Recusar Correspondência", color="danger", className="mr-1", id="btRecusarCorresp", n_clicks=0,
-                           size="sm", style={"height": "50%"})
-            ]
+                dbc.Col(
+                    [
+                        dbc.Button("Confirmar Correspondência", color="success", id="btConfirmarCorresp", n_clicks=0,
+                               size="sm", style={"margin-right": "3%"}),
+                        dbc.Button("Recusar Correspondência", color="danger", id="btRecusarCorresp", n_clicks=0,
+                            size="sm")
+                    ]
+                )
+            ],
         ),
         html.Br(),
         html.Div(id="output_schemas", style={"display": "none"})
